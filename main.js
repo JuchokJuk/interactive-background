@@ -7,7 +7,7 @@ import { degToRad } from "./helpers/angles";
 import random from "./helpers/random";
 
 
-async function runMatter() {
+async function runMatter(canvas) {
 
   // create engine
   const engine = Matter.Engine.create();
@@ -83,7 +83,7 @@ async function runMatter() {
   for (const figure of figures) {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const angle = degToRad(random(0,360));
+    const angle = degToRad(random(0, 360));
     const r = Math.sqrt(w ** 2 + h ** 2)
     stack.push(
       Matter.Bodies.fromVertices(
@@ -107,7 +107,7 @@ async function runMatter() {
   };
 
   for (const body of stack) {
-    Matter.Body.setAngle(body, degToRad(random(0,360)));
+    Matter.Body.setAngle(body, degToRad(random(0, 360)));
   };
 
   Matter.World.add(engine.world, stack);
@@ -169,42 +169,46 @@ async function runMatter() {
   };
 };
 
-function setWindowSize() {
-  matter.render.canvas.width = window.innerWidth;
-  matter.render.canvas.height = window.innerHeight;
-};
 
-function resetGravityPoint(event) {
-  Matter.Events.off(matter.engine, 'afterUpdate', matter.updateHandler);
-  matter.mouseConstraint.mouse.mouseup(event);
+(async () => {
 
-  Matter.Body.setPosition(matter.attractiveBody, {
-    x: matter.render.options.width / 2,
-    y: matter.render.options.height / 2,
-  });
-}
+  function setWindowSize() {
+    matter.render.canvas.width = window.innerWidth;
+    matter.render.canvas.height = window.innerHeight;
+  };
 
-function setGravityPoint() {
-  Matter.Events.on(matter.engine, 'afterUpdate', updateHandler);
-}
+  function resetGravityPoint(event) {
+    Matter.Events.off(matter.engine, 'afterUpdate', matter.updateHandler);
+    matter.mouseConstraint.mouse.mouseup(event);
 
-function updateHandler() {
-  // smoothly move the attractor body towards the mouse
-  Matter.Body.translate(matter.attractiveBody, {
-    x: (matter.mouse.position.x - matter.attractiveBody.position.x) * 0.12,
-    y: (matter.mouse.position.y - matter.attractiveBody.position.y) * 0.12
-  });
-}
+    Matter.Body.setPosition(matter.attractiveBody, {
+      x: matter.render.options.width / 2,
+      y: matter.render.options.height / 2,
+    });
+  }
+
+  function setGravityPoint() {
+    Matter.Events.on(matter.engine, 'afterUpdate', updateHandler);
+  }
+
+  function updateHandler() {
+    // smoothly move the attractor body towards the mouse
+    Matter.Body.translate(matter.attractiveBody, {
+      x: (matter.mouse.position.x - matter.attractiveBody.position.x) * 0.12,
+      y: (matter.mouse.position.y - matter.attractiveBody.position.y) * 0.12
+    });
+  }
 
 
-Matter.use('matter-attractors');
+  Matter.use('matter-attractors');
 
-const canvas = document.getElementById('interactive-background');
+  const canvas = document.getElementById('interactive-background');
 
-const matter = await runMatter();
+  const matter = await runMatter(canvas);
 
-setWindowSize();
+  setWindowSize();
 
-window.addEventListener('resize', setWindowSize, false);
-canvas.addEventListener('mouseleave', resetGravityPoint, false);
-canvas.addEventListener('mouseenter', setGravityPoint, false);
+  window.addEventListener('resize', setWindowSize, false);
+  canvas.addEventListener('mouseleave', resetGravityPoint, false);
+  canvas.addEventListener('mouseenter', setGravityPoint, false);
+})();
