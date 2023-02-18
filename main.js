@@ -1,10 +1,13 @@
 import "pathseg";
 import "matter-attractors";
 import Matter from "matter-js";
+import loadImage from "./helpers/loadImage"
 import { app, backend, design, frontend, human, research } from "./shapes";
+import { degToRad } from "./helpers/angles";
+import random from "./helpers/random";
 
 
-function runMatter() {
+async function runMatter() {
 
   // create engine
   const engine = Matter.Engine.create();
@@ -15,7 +18,6 @@ function runMatter() {
 
 
   // create renderer
-
   const render = Matter.Render.create({
     element: canvas,
     engine: engine,
@@ -66,12 +68,22 @@ function runMatter() {
     { element: human, texture: "images/human.svg" },
   ];
 
+  const promises = figures.map(async (figure) => {
+    console.log('loading images...')
+    return {
+      element: figure.element,
+      texture: await loadImage(figure.texture)
+    }
+  });
+  await Promise.all(promises);
+  console.log('images loaded!')
+
   const stack = [];
 
   for (const figure of figures) {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const angle = Matter.Common.random(0, 360);
+    const angle = degToRad(random(0,360));
     const r = Math.sqrt(w ** 2 + h ** 2)
     stack.push(
       Matter.Bodies.fromVertices(
@@ -80,7 +92,6 @@ function runMatter() {
         Matter.Svg.pathToVertices(figure.element.firstElementChild),
         {
           render: {
-            rotate: Math.random(),
             sprite: {
               texture: figure.texture,
               xScale: 1,
@@ -96,7 +107,7 @@ function runMatter() {
   };
 
   for (const body of stack) {
-    Matter.Body.setAngle(body, Math.random());
+    Matter.Body.setAngle(body, degToRad(random(0,360)));
   };
 
   Matter.World.add(engine.world, stack);
@@ -190,7 +201,7 @@ Matter.use('matter-attractors');
 
 const canvas = document.getElementById('interactive-background');
 
-const matter = runMatter();
+const matter = await runMatter();
 
 setWindowSize();
 
