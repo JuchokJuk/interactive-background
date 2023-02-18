@@ -2,9 +2,16 @@ import "pathseg";
 import "matter-attractors";
 import Matter from "matter-js";
 import loadImage from "./helpers/loadImage"
-import { app, backend, design, frontend, human, research } from "./shapes";
 import { degToRad } from "./helpers/angles";
 import random from "./helpers/random";
+
+import { app, backend, design, frontend, human, research } from "./shapes";
+import appTexture from "./images/app.svg";
+import backendTexture from "./images/backend.svg";
+import designTexture from "./images/design.svg";
+import frontendTexture from "./images/frontend.svg";
+import researchTexture from "./images/research.svg";
+import humanTexture from "./images/human.svg";
 
 
 async function runMatter(canvas) {
@@ -60,15 +67,15 @@ async function runMatter(canvas) {
 
   // add some bodies that to be attracted
   const figures = [
-    { element: app, texture: "images/app.svg" },
-    { element: backend, texture: "images/backend.svg" },
-    { element: design, texture: "images/design.svg" },
-    { element: frontend, texture: "images/frontend.svg" },
-    { element: research, texture: "images/research.svg" },
-    { element: human, texture: "images/human.svg" },
+    { element: app, texture: appTexture },
+    { element: backend, texture: backendTexture },
+    { element: design, texture: designTexture },
+    { element: frontend, texture: frontendTexture },
+    { element: research, texture: researchTexture },
+    { element: human, texture: humanTexture },
   ];
 
-  for(const figure of figures){
+  for (const figure of figures) {
     figure.texture = await loadImage(figure.texture)
   }
 
