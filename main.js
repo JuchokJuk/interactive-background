@@ -68,15 +68,9 @@ async function runMatter(canvas) {
     { element: human, texture: "images/human.svg" },
   ];
 
-  const promises = figures.map(async (figure) => {
-    console.log('loading images...')
-    return {
-      element: figure.element,
-      texture: await loadImage(figure.texture)
-    }
-  });
-  await Promise.all(promises);
-  console.log('images loaded!')
+  for(const figure of figures){
+    figure.texture = await loadImage(figure.texture)
+  }
 
   const stack = [];
 
